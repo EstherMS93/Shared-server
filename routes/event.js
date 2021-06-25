@@ -60,6 +60,7 @@ router.patch("/:id", (req, res, next) => {
 
 //Delete route
       router.delete("/:id", (req, res, next) => {
+
         eventModel.findByIdAndDelete(req.params.id)
           .then(() => {
            return res.status(204).json({ message: "Your event has been successfully deleted" });

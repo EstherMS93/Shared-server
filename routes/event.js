@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const mongoose = require('mongoose');
 const eventModel = require("../models/eventModel");
 // const uploader = require("../configs/cloudinary");
 
@@ -41,7 +42,7 @@ router.get("/:id", (req, res, next) => {
 
 router.patch("/:id", (req, res, next) => {
     const event = { ...req.body };
-
+console.log(req.body)
     eventModel.findById(req.params.id)
       .then((eventList) => {
         if (!eventList)
@@ -61,9 +62,9 @@ router.patch("/:id", (req, res, next) => {
 //Delete route
       router.delete("/:id", (req, res, next) => {
 
-        eventModel.findByIdAndDelete(req.params.id)
-          .then(() => {
-           return res.status(204).json({ message: "Your event has been successfully deleted" });
+        eventModel.findByIdAndDelete({ _id: req.params.id })
+          .then((deletedEvent) => {
+           return res.status(204).json(deletedEvent);
           })
           .catch(next);
       });

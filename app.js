@@ -22,6 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Routes (for prefixation and testing)
 
 app.use("/api/event", require("./routes/event"));
+app.use("/api/comment", require("./routes/comment"));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

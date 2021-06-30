@@ -15,7 +15,7 @@ app.use(logger("dev"));
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: false })); 
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public/build")));
 
 
 
@@ -25,9 +25,19 @@ app.use("/api/event", require("./routes/event"));
 app.use("/api/comment", require("./routes/comment"));
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+
+
+app.use("/api/*", (req, res, next) => {  
+  const error = new Error("Ressource not found.");
+  error.status = 404;
+  next(error);});
+
+  if (process.env.NODE_ENV === "production") {
+    app.use("*", (req, res, next) => {
+      // If no routes match, send them the React HTML.
+      res.sendFile(path.join(__dirname, "public/build/index.html"));
+    });
+  }
 
 // error handler
 app.use(function(err, req, res, next) {
@@ -41,5 +51,16 @@ app.use(function(err, req, res, next) {
     error: err
 });
 })
+
+
+app.use((req, res, next) => {
+  // If no routes match, send them the React HTML.
+  res.sendFile(__dirname + "/public/build/index.html");
+});
+
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(x => console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`))
+  .catch(err => console.error('Error connecting to mongo', err));
 
 module.exports = app;
